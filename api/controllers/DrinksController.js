@@ -55,7 +55,7 @@ const addDrink = async (req, res) => {
             worker_id: worker_id,
             action: "Adding drink",
             time: Date.now(),
-            details: drink
+            details: {"drink": drink}
         })
 
         res.status(201).send(responseMessage(true, "drink has been added", drink));
@@ -258,7 +258,7 @@ const deleteDrink = async (req, res) => {
             worker_id: worker_id,
             action: "Deleting drink",
             time: Date.now(),
-            details: drink
+            details: {"drink": drink}
         })
 
         await drink.destroy();
