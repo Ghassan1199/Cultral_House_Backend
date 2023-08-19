@@ -5,7 +5,6 @@ const jwt = require("jsonwebtoken");
 const sendEmail = require('./MailController');
 
 const { consumers } = require("stream");
-const { resolve } = require("path/win32");
 
 const responseMessage = require("../middleware/responseHandler");
 const customerAuth = require("../middleware/customerAuth");
