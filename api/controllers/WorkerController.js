@@ -356,7 +356,6 @@ const retractConfirmation = async (req, res) => {
 
 }
 
-
 const approveOrder = async (req, res) => {
 
     const token = req.headers["x-access-token"];
