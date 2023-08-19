@@ -1,5 +1,5 @@
 const bcrypt = require("bcrypt");
-const db = require("../Models/index");
+const db = require("../models/index");
 const Actions = db.actions;
 const adminAuth = require("../middleware/adminAuth")
 const jwt = require("jsonwebtoken");
