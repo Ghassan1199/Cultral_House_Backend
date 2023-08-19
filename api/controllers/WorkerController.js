@@ -354,6 +354,8 @@ const retractConfirmation = async (req, res) => {
 
         reservation.save();
 
+        
+
         res.status(200).send(responseMessage(true, "reservations have been approved successfully", reservation));
 
     } catch (error) {
@@ -477,7 +479,7 @@ const retractOrder = async (req, res) => {
             worker_id : data.worker_id,
             event_id : data.event_id,
 
-            action: "Approving Order",
+            action: "retracting Order",
             time: Date.now(),
             details: data
         })
