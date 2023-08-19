@@ -203,7 +203,7 @@ const showWorkerDetails = async (req, res) => {
                 },
             });
 
-            event.actions=actions.toJSON();
+            event.actions=actions.toString();
             obj.push(event)
 
         }
