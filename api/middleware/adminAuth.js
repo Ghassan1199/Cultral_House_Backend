@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const db = require("../Models/index");
+const db = require("../models/index");
 
 const RError = require("./error.js");
 

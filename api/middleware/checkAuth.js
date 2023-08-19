@@ -1,5 +1,5 @@
 //importing modules
-const db = require("../Models");
+const db = require("../models");
 const jwt = require('jsonwebtoken')
 const {response} = require("express");
 //Assigning db.admins to Admin variable
