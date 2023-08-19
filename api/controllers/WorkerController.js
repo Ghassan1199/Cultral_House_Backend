@@ -189,22 +189,25 @@ const showWorkerDetails = async (req, res) => {
             },
         });
 
-        // let actions = await Actions.findAll({
-        //     where: {
-        //         worker_id
-        //     },
-        // });
 
-        // for(let event of events){
+        let obj=[];
+        for(let event of events){
 
+            event = event.toJSON();
 
-        //     event = event.toJSON();
+            let actions = await Actions.findAll({
+                where: {
+                    worker_id,
+                    event_id
+                },
+            });
 
-        //     for(let action of actions){
-        //     }
+            event.actions=actions;
+            obj.push(event)
 
+        }
 
-        // }
+        events = obj;
         const data = {worker, events};
         res.status(200).json({
             msg: "worker has been sent successfully",
@@ -392,12 +395,14 @@ const approveOrder = async (req, res) => {
         data.reservation_id = order.reservation_id
         data.order_id = order_id
         data.worker_id = worker_id
+        data.event_id = order.worker_event_id.event_id
 
         order.worker_event_id = wo.worker_event_id;
         order.save();
 
         await Actions.create({
             worker_id : worker_id,
+            event_id : data.event_id,
             action: "Approving Order",
             time: Date.now(),
             details: data
@@ -439,12 +444,15 @@ const retractOrder = async (req, res) => {
         data.reservation_id = order.reservation_id
         data.order_id = order_id
         data.worker_id = order.worker_event_id.worker_id
+        data.event_id = order.worker_event_id.event_id
 
         order.worker_event_id = null;
         order.save();
 
         await Actions.create({
             worker_id : data.worker_id,
+            event_id : data.event_id,
+
             action: "Approving Order",
             time: Date.now(),
             details: data

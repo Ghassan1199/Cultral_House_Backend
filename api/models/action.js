@@ -10,6 +10,11 @@ module.exports = (sequelize, DataTypes) => {
                 allowNull: true,
                 require: false
             },
+            event_id: {
+                type: DataTypes.INTEGER,
+                allowNull: true,
+                require: false
+            },
             action: {
                 type: DataTypes.STRING,
                 allowNull: false,
