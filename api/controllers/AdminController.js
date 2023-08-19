@@ -496,7 +496,6 @@ const getActions = async (req, res) => {
             time = date;
 
 
-           details = details.toJSON();
             const act = { action, time, details };
 
             actions.push(act);
