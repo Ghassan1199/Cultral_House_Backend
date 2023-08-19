@@ -382,13 +382,27 @@ const approveOrder = async (req, res) => {
 
 
         const reservation = await Reservation.findByPk(order.reservation_id);
-        const wo = await workers_events.findOne({
-            where: {
-                worker_id,
-                event_id: reservation.event_id
 
-            }
-        })
+        let wo;
+
+        if (reservation != null) {
+             wo = await workers_events.findOne({
+                where: {
+                    worker_id,
+                    event_id: reservation.event_id
+    
+                }
+            })
+        }else{
+
+            wo = await workers_events.findOne({
+                where: {
+                    worker_id    
+                }
+            })
+
+        }
+     
 
 
         const data ={};
@@ -411,6 +425,7 @@ const approveOrder = async (req, res) => {
         res.status(200).send(responseMessage(true, "order has been approved", order));
     } catch (error) {
 
+        console.log(error)
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
 
