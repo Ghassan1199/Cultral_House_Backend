@@ -388,8 +388,20 @@ const approveOrder = async (req, res) => {
             }
         })
 
+        const data ={};
+        data.reservation_id = order.reservation_id
+        data.order_id = order_id
+        data.worker_id = worker_id
+
         order.worker_event_id = wo.worker_event_id;
         order.save();
+
+        await Actions.create({
+            worker_id : worker_id,
+            action: "Approving Order",
+            time: Date.now(),
+            details: data
+        })
 
         res.status(200).send(responseMessage(true, "order has been approved", order));
     } catch (error) {
@@ -423,9 +435,20 @@ const retractOrder = async (req, res) => {
 
         }
 
+        const data ={};
+        data.reservation_id = order.reservation_id
+        data.order_id = order_id
+        data.worker_id = order.worker_event_id.worker_id
 
         order.worker_event_id = null;
         order.save();
+
+        await Actions.create({
+            worker_id : data.worker_id,
+            action: "Approving Order",
+            time: Date.now(),
+            details: data
+        })
 
         res.status(200).send(responseMessage(true, "order has been retracted", order));
     } catch (error) {

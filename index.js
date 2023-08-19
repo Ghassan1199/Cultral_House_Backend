@@ -20,7 +20,7 @@ const eventEmitter = require("./api/controllers/eventEmitter");
 
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 app.listen(port, () => {
     console.log("you are connected to 127.0.0.1:" + port)
