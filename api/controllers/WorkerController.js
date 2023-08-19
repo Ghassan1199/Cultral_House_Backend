@@ -6,6 +6,7 @@ const RError = require("../middleware/error.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const eventEmitter = require("./eventEmitter");
+const event = require("../Models/event");
 
 
 const Worker = db.workers;
@@ -202,7 +203,7 @@ const showWorkerDetails = async (req, res) => {
                 },
             });
 
-            event.actions=actions;
+            event.actions=actions.toJSON();
             obj.push(event)
 
         }
@@ -278,12 +279,12 @@ const confirmArrival = async (req, res) => {
         reservation.attendance_number = attendance_number;
         reservation.worker_id = worker_id;
 
+        const event = await Event.findOne({where: {event_id: reservation.event_id}});
+
         if (attendance_number != reservation.number_of_places) {
 
             const diff = reservation.number_of_places - attendance_number;
 
-
-            const event = await Event.findOne({where: {event_id: reservation.event_id}});
 
             event.available_places += diff;
 
@@ -300,6 +301,7 @@ const confirmArrival = async (req, res) => {
 
         await Actions.create({
             worker_id: worker_id,
+            event_id:event.event_id,
             action: "confirm arrival",
             time: Date.now(),
             details: reservation
