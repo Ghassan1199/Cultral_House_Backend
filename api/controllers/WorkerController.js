@@ -118,7 +118,7 @@ const login = async (req, res) => {
 
 }
 
-const showAllWorkers = async (req, res) => {
+const showAllWorkers = async (_, res) => {
     const workers = await Worker.findAll()
     res.status(200).json({
         msg: "workers has been sent successfully",
@@ -183,12 +183,28 @@ const showWorkerDetails = async (req, res) => {
 
         const event_id = we.map(v => v.event_id);
 
-        const events = await Event.findAll({
+        let events = await Event.findAll({
             where: {
                 [Op.or]: {event_id},
             },
         });
 
+        // let actions = await Actions.findAll({
+        //     where: {
+        //         worker_id
+        //     },
+        // });
+
+        // for(let event of events){
+
+
+        //     event = event.toJSON();
+
+        //     for(let action of actions){
+        //     }
+
+
+        // }
         const data = {worker, events};
         res.status(200).json({
             msg: "worker has been sent successfully",

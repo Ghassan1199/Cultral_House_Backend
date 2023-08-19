@@ -6,7 +6,6 @@ const jwt = require("jsonwebtoken");
 const responseMessage = require("../middleware/responseHandler");
 const RError = require("../middleware/error.js");
 const adminAuth = require("../middleware/adminAuth");
-const { where } = require("sequelize");
 
 const eventEmitter = require("./eventEmitter");
 
@@ -418,9 +417,25 @@ const addWorkersToEvent = async (req, res) => {
     const event_id = req.body.event_id;
     let workers = req.body.workers;
 
+  
+
 
 
     try {
+
+        if (!event_id) {
+         
+         
+            throw new RError(400, "choose the event");
+        }
+
+        if (!workers) {
+         
+         
+            throw new RError(400, "choose the workers");
+        }
+
+
         await adminAuth(token);
 
         workers = workers.split(/[,]/);

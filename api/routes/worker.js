@@ -7,11 +7,11 @@ const express = require('express')
 
 const router = express.Router()
 
-router.get('/show-all', checkAuth.checkIfSuper, workerController.showAllWorkers)
+router.get('/show-all', workerController.showAllWorkers)
 
-router.post('/create', checkAuth.checkIfSuper, upload('workers').single('image'), checkAuth.checkWorker, workerController.createWorker)
+router.post('/create', upload('workers').single('image'), checkAuth.checkWorker, workerController.createWorker)
 
-router.delete('/delete', checkAuth.checkIfSuper, workerController.deleteWorker)
+router.delete('/delete', workerController.deleteWorker)
 router.get('/show-worker-details/:worker_id', checkAuth.checkIfSuper, workerController.showWorkerDetails)
 
 router.post('/login',checkCredentials,workerController.login);
