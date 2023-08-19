@@ -490,7 +490,7 @@ const getActions = async (req, res) => {
 
 
 
-        res.status(200).send(responseMessage(true, "wactions retrieved successfully", actions));
+        res.status(200).send(responseMessage(true, "actions retrieved successfully", actions));
 
     } catch (error) {
 
