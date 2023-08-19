@@ -1,4 +1,4 @@
-const db = require("../Models/index");
+const db = require("../models/index");
 const responseMessage = require("../middleware/responseHandler");
 const RError = require("../middleware/error.js");
 const fs = require('fs');

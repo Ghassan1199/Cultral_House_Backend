@@ -1,4 +1,4 @@
-const db = require("../Models/index");
+const db = require("../models/index");
 const {unlinkSync} = require('fs');
 const workerAuth = require("../middleware/workerAuth");
 const responseMessage = require("../middleware/responseHandler");

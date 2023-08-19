@@ -1,4 +1,4 @@
-const db = require("../Models/index");
+const db = require("../models/index");
 const dotenv = require('dotenv');
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
