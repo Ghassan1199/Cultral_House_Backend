@@ -382,7 +382,6 @@ const approveOrder = async (req, res) => {
 
 
         const reservation = await Reservation.findByPk(order.reservation_id);
-
         const wo = await workers_events.findOne({
             where: {
                 worker_id,
@@ -391,11 +390,12 @@ const approveOrder = async (req, res) => {
             }
         })
 
+
         const data ={};
-        data.reservation_id = order.reservation_id
+        data.reservation_id = wo.reservation_id
         data.order_id = order_id
         data.worker_id = worker_id
-        data.event_id = order.worker_event_id.event_id
+        data.event_id = wo.event_id
 
         order.worker_event_id = wo.worker_event_id;
         order.save();
