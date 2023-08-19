@@ -38,9 +38,11 @@ const addDrink = async (req, res) => {
 
         let admin_id = null
         let worker_id = null
+
         await jwt.verify(token, process.env.SECRET, null, (err, decoded) => {
-            if (decoded.worker)
-                worker_id = decoded.worker.worker_id
+            console.log(decoded)
+            if (decoded.worker_id)
+                worker_id = decoded.worker_id
             if (decoded.admin)
                 admin_id = decoded.admin.admin_id
             if (err) {
@@ -185,8 +187,8 @@ const updateDrink = async (req, res) => {
         let admin_id = null
         let worker_id = null
         await jwt.verify(token, process.env.SECRET, null, (err, decoded) => {
-            if (decoded.worker)
-                worker_id = decoded.worker.worker_id
+            if (decoded.worker_id)
+                worker_id = decoded.worker_id
             if (decoded.admin)
                 admin_id = decoded.admin.admin_id
             if (err) {
@@ -242,8 +244,8 @@ const deleteDrink = async (req, res) => {
         let admin_id = null
         let worker_id = null
         await jwt.verify(token, process.env.SECRET, null, (err, decoded) => {
-            if (decoded.worker)
-                worker_id = decoded.worker.worker_id
+            if (decoded.worker_id)
+                worker_id = decoded.worker_id
             if (decoded.admin)
                 admin_id = decoded.admin.admin_id
             if (err) {
