@@ -4,7 +4,7 @@ dotenv.config();
 const {Sequelize, DataTypes, Op, ValidationError} = require('sequelize')
 
 
-const sequelize = new Sequelize(`postgres://postgres:${process.env.DB_PASSWORD}@localhost:5432/test`, {dialect: "postgres"})
+const sequelize = new Sequelize(`postgres://postgres:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`, {dialect: "postgres"})
 
 // //checking if connection is done
 // sequelize.authenticate().then(() => {
