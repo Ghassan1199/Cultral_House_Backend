@@ -508,6 +508,9 @@ const makeOrderByWorker = async (req, res) => {
     if (!drinks) {
         return res.status(400).send(responseMessage(false, "insert drinks"));
     }
+    if(!req.body.event_id){
+        return res.status(400).send(responseMessage(false, "insert event_id"));
+    }
 
 
     let transaction;
