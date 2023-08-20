@@ -142,3 +142,21 @@ app.use("/resIdToUser/:id", (req, res) => {
 });
 
 
+app.use("/endEvent", (_, res) => {
+
+    SSEConfig(res);
+
+    eventEmitter.on('eventHasEnded', () => {
+
+
+            res.status(200).write(`data: event is ended\n\n`);
+
+        
+
+    });
+
+
+});
+
+
+

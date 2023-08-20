@@ -232,6 +232,8 @@ const showAllEvents = async (req, res) => {
     const currentMonth = currentDate[0];
     const currentDay = currentDate[1];
 
+    
+
     //2023-08-07 15:00
     for (let index = 0; index < events.length; index++) {
         let event = events[index].toJSON();
