@@ -38,6 +38,8 @@ const makeOrder = async (req, res) => {
 
     try {
 
+        transaction = await sequelize.transaction();
+
         const reservation = await Reservation.findByPk(reservation_id);
 
         const event = await Event.findByPk(reservation.event_id);
@@ -57,7 +59,6 @@ const makeOrder = async (req, res) => {
         }
 
 
-        transaction = await sequelize.transaction();
 
         await customerAuth(token);
 
