@@ -218,7 +218,7 @@ const showAllEvents = async (req, res) => {
     const upComing = [];
     const now = [];
 
-    const eventDurstionInHours = 4;
+    const eventDurstionInHours = 6;
     const ctDate = new Date().toLocaleString("en", {hour12: false});
 
     const currentDateArray = ctDate.split(/[,:]/);

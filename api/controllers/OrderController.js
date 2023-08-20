@@ -453,7 +453,9 @@ const showAllOrders = async (req, res) => {
             where: {worker_event_id: null}, include: [Reservation, {
                 model: Orders_drinks,
                 include: Drink
-            }]
+            },
+        
+        ]
         });
 
 

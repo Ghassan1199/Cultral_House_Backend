@@ -80,7 +80,8 @@ const login = async (req, res) => {
                 const {customer_id, first_name} = customer;
 
                 const token = jwt.sign({customer_id, first_name}, process.env.SECRET, {expiresIn: '3d'});
-                res.status(200).send(responseMessage(true, "token is generated", token, "token"));
+           const data = {customer_id, token};
+                res.status(200).send(responseMessage(true, "token is generated", data));
 
             }
 
