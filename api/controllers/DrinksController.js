@@ -103,31 +103,23 @@ const viewDrink = async (req, res) => {
 
     const drink_id = req.body.drink_id;
     if (!drink_id) {
-
         return res.status(400).send(responseMessage(false, "choose drink to show"));
 
     }
 
 
     try {
-
-
         const drink = await Drink.findByPk(drink_id);
 
         if (drink === null) {
-
             throw new RError(404, "drink not found");
-
         }
-
 
         res.status(200).send(responseMessage(true, "drink has been retrieved", drink));
 
     } catch (error) {
         const statusCode = error.statusCode || 500;
-
         return res.status(statusCode).send(responseMessage(false, error.message));
-
 
     }
 
@@ -138,16 +130,13 @@ const updateDrink = async (req, res) => {
     const {title, description, price, quantity, cost} = req.body;
     const drink_id = req.body.drink_id;
 
-
     try {
 
         const drink = await Drink.findByPk(drink_id);
         const old_drink = drink;
 
         if (drink == null) {
-
             throw new RError(404, "drink not found")
-
         }
 
         if (title) {
@@ -167,13 +156,10 @@ const updateDrink = async (req, res) => {
         }
         if (req.file) {
             if (fs.existsSync(drink.picture)) {
-
                 fs.unlinkSync(drink.picture);
-
             }
 
             drink.picture = req.file.path;
-
 
         }
 
@@ -204,17 +190,12 @@ const updateDrink = async (req, res) => {
             details: {"old_drink": old_drink, "new_drink": drink}
         })
 
-
         await drink.save();
-
         res.status(200).send(responseMessage(true, "drink has been updated", drink));
 
     } catch (error) {
         const statusCode = error.statusCode || 500;
-
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
 }
@@ -224,16 +205,14 @@ const deleteDrink = async (req, res) => {
 
     const drink_id = req.body.drink_id;
 
-
     try {
 
         const drink = await Drink.findByPk(drink_id);
 
         if (drink == null) {
-
             throw new RError(404, "drink not found")
-
         }
+
         let token = req.headers["x-access-token"];
         if (!token) {
             return res.status(403).json({
@@ -263,16 +242,11 @@ const deleteDrink = async (req, res) => {
 
         await drink.destroy();
 
-
-
         res.status(200).send(responseMessage(true, "drink has been deleted"));
 
     } catch (error) {
         const statusCode = error.statusCode || 500;
-
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
 }

@@ -131,7 +131,6 @@ const makeReservationByAdmin = async (req, res) => {
 
     const token = req.headers["x-access-token"];
 
-
     try {
 
         const event_id = req.body.event_id;
@@ -155,7 +154,6 @@ const makeReservationByAdmin = async (req, res) => {
 
 
         if (event == null) {
-
             throw new RError(404, "event not found");
         }
 
@@ -192,11 +190,9 @@ const makeReservationByAdmin = async (req, res) => {
 
     } catch (errors) {
 
-        var statusCode = errors.statusCode || 500;
+        let statusCode = errors.statusCode || 500;
         if (errors instanceof ValidationError) {
-
             statusCode = 400;
-
         }
 
         return res.status(statusCode).send(responseMessage(false, errors.message));
@@ -225,9 +221,7 @@ const deleteReservationByAdmin = async (req, res) => {
         const reservation = await Reservation.findByPk(reservation_id);
 
         if (reservation === null) {
-
             throw new RError(404, "reservation not found");
-
         }
 
 
@@ -257,15 +251,11 @@ const deleteReservationByAdmin = async (req, res) => {
 
         res.status(200).send(responseMessage(true, "reservation has been deleted successfully"));
 
-
     } catch (error) {
-
-
         await transaction.rollback();
-
         const statusCode = error.statusCode || 500;
-        return res.status(statusCode).send(responseMessage(false, error.message));
 
+        return res.status(statusCode).send(responseMessage(false, error.message));
 
     }
 
@@ -278,20 +268,15 @@ const stats = async (req, res) => {
     const workersCost = await workers_events.sum("cost");
     let drinksCost = 0;
 
-
     //for proceeds
 
     let ordersProceeds = 0;
     const OD = await Orders_drinks.findAll({include: Drinks});
 
-
     OD.forEach(od => {
         if (od["drink"] != null) {
             ordersProceeds += (od["quantity"] * od["drink"]["price"]);
-
         }
-
-
     });
 
     let reservationsProceeds = 0;
@@ -307,9 +292,7 @@ const stats = async (req, res) => {
     });
 
     reservations.forEach(res => {
-
         reservationsProceeds += (res["attendance_number"] * res["event"]["ticket_price"]);
-
 
     });
 
@@ -382,54 +365,39 @@ const showReservationsForAdmin = async (req, res) => {
     try {
         await adminAuth(token);
 
-
         const reservations = await Reservation.findAll();
 
         if (reservations.length === 0) {
             throw new RError(404, "no reservations found");
-
-
         }
 
         res.status(200).send(responseMessage(true, "reservations have been updated successfully", reservations));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
 
     }
 }
 
 const addWorkersToEvent = async (req, res) => {
 
-
     const token = req.headers["x-access-token"];
-
     const event_id = req.body.event_id;
     let workers = req.body.workers;
-
 
     try {
 
         if (!event_id) {
-
-
             throw new RError(400, "choose the event");
         }
 
         if (!workers) {
-
-
             throw new RError(400, "choose the workers");
         }
 
-
         await adminAuth(token);
-
         workers = workers.split(/[,]/);
-
 
         for (let worker of workers) {
 
@@ -442,20 +410,14 @@ const addWorkersToEvent = async (req, res) => {
                 worker_id,
                 cost
             });
-
             eventEmitter.emit('send_event_id', worker_id, event_id);
-
         }
-
 
         res.status(200).send(responseMessage(true, "workers have been added to the event successfully"));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
 
@@ -464,44 +426,32 @@ const addWorkersToEvent = async (req, res) => {
 const getActions = async (req, res) => {
     const admin_id = req.body.admin_id;
 
-
     try {
 
-
         const acts = await Actions.findAll({where: {admin_id}});
-
         let actions = [];
 
         for (let index = 0; index < acts.length; index++) {
             const element = acts[index];
             let {action, details, time} = element;
 
-
             const dateObject = new Date(time);
             const date = dateObject.toLocaleString("en", {hour12: false});
-
             time = date;
-
-
             const act = {action, time, details};
-
             actions.push(act);
 
         }
 
-
         res.status(200).send(responseMessage(true, "actions retrieved successfully", actions));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
-
 }
+
 module.exports = {
     createAdmin,
     login,
