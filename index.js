@@ -114,7 +114,7 @@ app.use("/sendEventID/:worker_id", (req, res) => {
     eventEmitter.on('send_event_id', (worker_id,event_id) => {
 
         if (id == worker_id) {
-            res.status(200).write(`${event_id}\n\n`);
+            res.status(200).write(`data: ${event_id}\n\n`);
 
         }
 
