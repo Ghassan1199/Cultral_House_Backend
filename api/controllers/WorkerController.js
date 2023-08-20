@@ -6,7 +6,7 @@ const RError = require("../middleware/error.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const eventEmitter = require("./eventEmitter");
-const event = require("../Models/event");
+const event = require("../models/event");
 
 
 const Worker = db.workers;
