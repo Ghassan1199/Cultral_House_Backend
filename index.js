@@ -156,18 +156,18 @@ app.use("/sseForCustomers/:id", (req, res) => {
 
         if (id == customer_id) {
             res.status(200).write(`data: ${reservation_id}\n\n`);
-
         }
 
     });
 
 
-    eventEmitter.on('eventHasEnded', () => {
+    eventEmitter.on('eventHasEnded', (customer_id) => {
 
+        if (id == customer_id) {
 
             res.status(200).write(`data: event is ended\n\n`);
 
-        
+        }
 
 });
 

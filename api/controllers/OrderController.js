@@ -41,6 +41,8 @@ const makeOrder = async (req, res) => {
 
         transaction = await sequelize.transaction();
 
+        await customerAuth(token);
+
         const reservation = await Reservation.findByPk(reservation_id);
 
         const event = await Event.findByPk(reservation.event_id);
@@ -48,14 +50,17 @@ const makeOrder = async (req, res) => {
 
         const eventDate = new Date(event.begin_date);
         const currentDate = new Date();
+
+
+
         
         const timeDifferenceInMilliseconds = eventDate - currentDate;
         const timeDifferenceInHours = timeDifferenceInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
         const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
 
-        
-        if (timeDifferenceInMinutes >= 5) {
-            eventEmitter.emit('eventHasEnded');
+
+        if (Math.abs(timeDifferenceInMinutes) >= 5) {
+            eventEmitter.emit('eventHasEnded',reservation.customer_id);
 
             return res.status(401).send(responseMessage(true, "the event is over"));
 
@@ -63,7 +68,6 @@ const makeOrder = async (req, res) => {
 
 
 
-        await customerAuth(token);
 
         const order = await Order.create({
 
