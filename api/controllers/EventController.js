@@ -37,15 +37,11 @@ const createEvent = async (req, res) => {
 
     const token = req.headers["x-access-token"];
 
-
     let transaction;
-
 
     try {
 
-
         transaction = await sequelize.transaction();
-
 
         const admin = await adminAuth(token);
 
@@ -62,7 +58,7 @@ const createEvent = async (req, res) => {
             artists_cost
         };
 
-        const event = await Event.create(data, { transaction });
+        const event = await Event.create(data, {transaction});
 
 
         const artists_ids = artists.split(',').map(id => id.trim());
@@ -74,7 +70,7 @@ const createEvent = async (req, res) => {
             await Artist_Event.create({
                 artist_id: artist_id,
                 event_id: event.event_id,
-            }, { transaction })
+            }, {transaction})
 
         }
 
@@ -83,10 +79,9 @@ const createEvent = async (req, res) => {
                 await Photos.create({
                     event_id: event.event_id,
                     picture: req.files[i].path
-                }, { transaction })
+                }, {transaction})
             }
         }
-
 
         await transaction.commit();
 
@@ -97,9 +92,7 @@ const createEvent = async (req, res) => {
             details: event
         })
 
-
         eventEmitter.emit('create_new_event');
-
 
         res.status(201).send(responseMessage(true, "event is added", event));
 
@@ -108,10 +101,9 @@ const createEvent = async (req, res) => {
         await transaction.rollback();
 
         let statusCode = errors.statusCode || 500;
+
         if (errors instanceof ValidationError) {
-
             statusCode = 400;
-
         }
         console.log(errors);
 
@@ -174,7 +166,7 @@ const updateEvent = async (req, res) => {
 
     if (event != null) {
         const old_event = event;
-        const { title, description, ticket_price, available_places, begin_date, band_name } = req.body
+        const {title, description, ticket_price, available_places, begin_date, band_name} = req.body
         if (title != null)
             event.title = title
         if (description != null)
@@ -194,7 +186,7 @@ const updateEvent = async (req, res) => {
                 admin_id: admin_id,
                 action: "Editing Event",
                 time: Date.now(),
-                details: { "new event": event, "old event": old_event }
+                details: {"new event": event, "old event": old_event}
             })
 
             await event.save();
@@ -212,7 +204,7 @@ const updateEvent = async (req, res) => {
 
 
     } else {
-        return res.status(404).json({ msg: "event not found" })
+        return res.status(404).json({msg: "event not found"})
     }
 
 
@@ -221,13 +213,13 @@ const updateEvent = async (req, res) => {
 
 const showAllEvents = async (req, res) => {
 
-    let events = await Event.findAll({ include: Photos });
+    let events = await Event.findAll({include: Photos});
     const past = [];
     const upComing = [];
     const now = [];
 
     const eventDurstionInHours = 4;
-    const ctDate = new Date().toLocaleString("en", { hour12: false });
+    const ctDate = new Date().toLocaleString("en", {hour12: false});
 
     const currentDateArray = ctDate.split(/[,:]/);
 
@@ -244,7 +236,7 @@ const showAllEvents = async (req, res) => {
     for (let index = 0; index < events.length; index++) {
         let event = events[index].toJSON();
         const dateObject = new Date(event.begin_date);
-        const date = dateObject.toLocaleString("en", { hour12: false });
+        const date = dateObject.toLocaleString("en", {hour12: false});
         const dateArray = date.split(/[,:]/);
 
         const eventDate = dateArray[0].split(/[/]/);
@@ -262,31 +254,24 @@ const showAllEvents = async (req, res) => {
             upComing.push(event);
 
         } else if (currentYear > eventYear) {
-
             past.push(event);
+
         } else {
 
             if (Number(currentMonth) < Number(eventMonth)) {
-
-            
-
                 upComing.push(event);
-            }
-            else if (Number(currentMonth) > Number(eventMonth)) {
-             
 
+            } else if (Number(currentMonth) > Number(eventMonth)) {
                 past.push(event);
 
-            }
-            else{
+            } else {
                 if (Number(currentDay) < Number(eventDay)) {
                     upComing.push(event)
-                }
-                else if (Number(currentDay) > Number(eventDay)) {
-                    past.push(event);
-                }
 
-                else {
+                } else if (Number(currentDay) > Number(eventDay)) {
+                    past.push(event);
+
+                } else {
                     const eventDurationInMinutes = eventDurstionInHours * 60;
 
                     const currentTimeInMinutes = currentHours * 60 + Number(currentMinutes);
@@ -303,165 +288,150 @@ const showAllEvents = async (req, res) => {
                     } else {
                         now.push(event);
                     }
-                } 
-
+                }
             }
-       
         }
+    }
+
+    events = {past, now, upComing};
+    res.status(200).json({
+        msg: "events has been sent successfully",
+        data: events
+    })
+}
+
+
+const showEventDetailsForCustomer = async (req, res) => {
+
+    const event_id = req.body.event_id;
+
+    try {
+
+        let event = await Event.findOne({
+            where: {event_id}, include: [
+                Photos,
+                {
+                    model: Artist_Event,
+                    include: Artist
+                }
+            ]
+        });
+
+        event = event.toJSON();
+
+        const dateObject = new Date(event.begin_date);
+        const date = dateObject.toLocaleString("en", {hour12: false});
+
+        event.begin_date = date;
+
+
+        res.status(200).send(responseMessage(true, "event is sent", event));
+
+    } catch (errors) {
+
+
+        var statusCode = errors.statusCode || 500;
+        if (errors instanceof ValidationError) {
+
+            statusCode = 400;
 
         }
 
-        events = { past, now, upComing };
-        res.status(200).json({
-            msg: "events has been sent successfully",
-            data: events
-        })
+        return res.status(statusCode).send(responseMessage(false, errors.message));
     }
 
 
-    const showEventDetailsForCustomer = async (req, res) => {
+}
+
+const showEventDetailsForAdmin = async (req, res) => {
 
 
-        const event_id = req.body.event_id;
+    const event_id = req.body.event_id;
 
 
-        try {
+    try {
 
-            let event = await Event.findOne({
-                where: { event_id }, include: [
-                    Photos,
-                    {
-                        model: Artist_Event,
-                        include: Artist
-                    }
-                ]
-            });
-
-            event = event.toJSON();
-
-            const dateObject = new Date(event.begin_date);
-            const date = dateObject.toLocaleString("en", { hour12: false });
-
-            event.begin_date = date;
-
-
-            res.status(200).send(responseMessage(true, "event is sent", event));
-
-        } catch (errors) {
-
-
-            var statusCode = errors.statusCode || 500;
-            if (errors instanceof ValidationError) {
-
-                statusCode = 400;
-
-            }
-
-            return res.status(statusCode).send(responseMessage(false, errors.message));
-        }
-
-
-    }
-
-    const showEventDetailsForAdmin = async (req, res) => {
-
-
-        const event_id = req.body.event_id;
-
-
-        try {
-
-            let event = await Event.findOne({
-                where: { event_id }, include: [
-                    Photos,
-                    {
-                        model: Artist_Event,
-                        include: Artist
-                    },
-                    {
-                        model: workers_events,
-                        include: Worker
-                    }
-                   
-                ]
-            });
-
-            event = event.toJSON();
-
-            const dateObject = new Date(event.begin_date);
-            const date = dateObject.toLocaleString("en", { hour12: false });
-
-            event.begin_date = date;
-
-            const reservations = await Reservation.findAll({
-                where: {
-                    event_id
+        let event = await Event.findOne({
+            where: {event_id}, include: [
+                Photos,
+                {
+                    model: Artist_Event,
+                    include: Artist
                 },
-                include: [
-                    Worker,
-                    {
-                        model: Order,
-                        include: {
-                           model: db.orders_drinks,
-                           include:Drink
-                        }
-                    }]
-
-            });
-
-            let bookingIncome = 0;
-            let ordersIncome = 0;
-            const ticket_price = event.ticket_price;
-
-            for(const reservation of reservations){
-
-
-                if (reservation.attendance_number != null) {
-                    bookingIncome += (reservation.attendance_number * ticket_price)
+                {
+                    model: workers_events,
+                    include: Worker
                 }
+            ]
+        });
 
-                if (reservation.orders != 0) {
+        event = event.toJSON();
 
-                    for(const order of reservation.orders){
+        const dateObject = new Date(event.begin_date);
+        const date = dateObject.toLocaleString("en", {hour12: false});
 
-                        for(const od of order.order_drinks){
+        event.begin_date = date;
 
-                            const drink = await Drink.findByPk(od.drink_id);
+        const reservations = await Reservation.findAll({
+            where: {
+                event_id
+            },
+            include: [
+                Worker, {
+                    model: Order,
+                    include: {
+                        model: db.orders_drinks,
+                        include: Drink
+                    }
+                }]
+        });
 
-                            if (drink != null) {
-                                ordersIncome += (od.quantity * drink.price);
+        let bookingIncome = 0;
+        let ordersIncome = 0;
+        const ticket_price = event.ticket_price;
 
-                            }
+        for (const reservation of reservations) {
+
+
+            if (reservation.attendance_number != null) {
+                bookingIncome += (reservation.attendance_number * ticket_price)
+            }
+
+            if (reservation.orders != 0) {
+
+                for (const order of reservation.orders) {
+
+                    for (const od of order.order_drinks) {
+
+                        const drink = await Drink.findByPk(od.drink_id);
+
+                        if (drink != null) {
+                            ordersIncome += (od.quantity * drink.price);
+
                         }
                     }
-                    
                 }
-
-
-
-
             }
-
-           
-            const data = { event, reservations, bookingIncome, ordersIncome };
-
-            res.status(200).send(responseMessage(true, "event is sent", data));
-
-        } catch (errors) {
-
-
-            var statusCode = errors.statusCode || 500;
-            if (errors instanceof ValidationError) {
-
-                statusCode = 400;
-
-            }
-
-            return res.status(statusCode).send(responseMessage(false, errors.message));
         }
 
 
+        const data = {event, reservations, bookingIncome, ordersIncome};
+
+        res.status(200).send(responseMessage(true, "event is sent", data));
+
+    } catch (errors) {
+
+        let statusCode = errors.statusCode || 500;
+        if (errors instanceof ValidationError) {
+            statusCode = 400;
+
+        }
+
+        return res.status(statusCode).send(responseMessage(false, errors.message));
     }
+
+
+}
 
 /*  if (currentDay < eventDay) {
                     upComing.push(event)
@@ -488,12 +458,14 @@ const showAllEvents = async (req, res) => {
                         now.push(event);
                     }
                 } */
-    module.exports = {
-        createEvent,
-        showAllEvents,
-        deleteEvent,
-        updateEvent,
-        showEventDetailsForCustomer,
-        showEventDetailsForAdmin
 
-    }
+
+module.exports = {
+    createEvent,
+    showAllEvents,
+    deleteEvent,
+    updateEvent,
+    showEventDetailsForCustomer,
+    showEventDetailsForAdmin
+
+}
