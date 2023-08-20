@@ -142,9 +142,24 @@ app.use("/resIdToUser/:id", (req, res) => {
 });
 
 
-app.use("/endEvent", (_, res) => {
+
+
+app.use("/sseForCustomers/:id", (_, res) => {
 
     SSEConfig(res);
+
+    const id = req.params.id;
+
+    eventEmitter.on('sendID', (customer_id, reservation_id) => {
+
+
+        if (id == customer_id) {
+            res.status(200).write(`data: ${reservation_id}\n\n`);
+
+        }
+
+    });
+
 
     eventEmitter.on('eventHasEnded', () => {
 
@@ -153,7 +168,14 @@ app.use("/endEvent", (_, res) => {
 
         
 
-    });
+});
+
+eventEmitter.on('create_new_event', () => {
+
+    res.status(200).write(`data: new Event\n\n`);
+
+
+});
 
 
 });
