@@ -397,7 +397,6 @@ const approveOrder = async (req, res) => {
 
         let wo;
 
-        if (reservation != null) {
              wo = await workers_events.findOne({
                 where: {
                     worker_id,
@@ -405,16 +404,7 @@ const approveOrder = async (req, res) => {
     
                 }
             })
-        }else{
-
-            wo = await workers_events.findOne({
-                where: {
-                    worker_id    
-                }
-            })
-
-        }
-     
+        
 
 
         const data ={};
