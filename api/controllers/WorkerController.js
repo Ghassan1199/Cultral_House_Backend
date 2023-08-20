@@ -496,9 +496,6 @@ const makeOrderByWorker = async (req, res) => {
     if (!drinks) {
         return res.status(400).send(responseMessage(false, "insert drinks"));
     }
-    if(!req.body.event_id){
-        return res.status(400).send(responseMessage(false, "insert event_id"));
-    }
 
 
     let transaction;
@@ -508,22 +505,30 @@ const makeOrderByWorker = async (req, res) => {
 
         transaction = await sequelize.transaction();
 
+        const worker = await workerAuth(token);
+        const event_id = req.body.event_id;
 
-        await workerAuth(token);
+        const we = await workers_events.findOne({
+            where: {
+                event_id: event_id,
+                worker_id : worker.worker_id
+            }
+        })
 
+        console.log("the worker_event is " + we.worker_event_id)
         const order = await Order.create({
-
             order_date: Date(),
             reservation_id: null,
-            description
-
+            description,
+            worker_event_id: we.worker_event_id
         }, {transaction});
+
 
         const ODS = [];
 
         let cost = 0;
 
-         drinks = drinks.split(/[,]/);
+        drinks = drinks.split(/[,]/);
 
         for (let drink of drinks) {
 
