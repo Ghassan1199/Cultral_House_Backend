@@ -101,12 +101,11 @@ const login = async (req, res) => {
                 const {worker_id, first_name} = worker;
 
                 const token = jwt.sign({worker_id, first_name}, process.env.SECRET, {expiresIn: '3d'});
-                res.status(200).send(responseMessage(true, "token is generated", token, "token"));
+                const data = {worker_id, token};
 
+                res.status(200).send(responseMessage(true, "token is generated", data));
 
             }
-
-
         }
 
     } catch (error) {
