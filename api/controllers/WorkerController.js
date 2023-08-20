@@ -190,8 +190,8 @@ const showWorkerDetails = async (req, res) => {
         });
 
 
-        let obj=[];
-        for(let event of events){
+        let obj = [];
+        for (let event of events) {
 
             event = event.toJSON();
 
@@ -202,8 +202,8 @@ const showWorkerDetails = async (req, res) => {
                 },
             });
 
-         
-            event.actions=actions;
+
+            event.actions = actions;
             obj.push(event)
 
         }
@@ -301,7 +301,7 @@ const confirmArrival = async (req, res) => {
 
         await Actions.create({
             worker_id: worker_id,
-            event_id:event.event_id,
+            event_id: event.event_id,
             action: "confirm arrival",
             time: Date.now(),
             details: reservation
@@ -353,7 +353,6 @@ const retractConfirmation = async (req, res) => {
 
         reservation.save();
 
-        
 
         res.status(200).send(responseMessage(true, "reservations have been approved successfully", reservation));
 
@@ -387,24 +386,15 @@ const approveOrder = async (req, res) => {
         const reservation = await Reservation.findByPk(order.reservation_id);
         let wo;
 
-        if (reservation != null) {
-             wo = await workers_events.findOne({
-                where: {
-                    worker_id,
-                    event_id: reservation.event_id
-                }
-            })
-        }else{
-            wo = await workers_events.findOne({
-                where: {
-                    worker_id    
-                }
-            })
-        }
-     
+        wo = await workers_events.findOne({
+            where: {
+                worker_id,
+                event_id: reservation.event_id
+            }
+        })
 
 
-        const data ={};
+        const data = {};
         data.reservation = reservation
         data.order = order
         data.event_id = reservation.event_id
@@ -413,8 +403,8 @@ const approveOrder = async (req, res) => {
         order.save();
 
         await Actions.create({
-            worker_id : worker_id,
-            event_id : data.event_id,
+            worker_id: worker_id,
+            event_id: data.event_id,
             action: "Approving Order",
             time: Date.now(),
             details: data
@@ -453,7 +443,7 @@ const retractOrder = async (req, res) => {
 
         }
 
-        const data ={};
+        const data = {};
         data.reservation_id = order.reservation_id
         data.order_id = order_id
         data.worker_id = order.worker_event_id.worker_id
@@ -463,8 +453,8 @@ const retractOrder = async (req, res) => {
         order.save();
 
         await Actions.create({
-            worker_id : data.worker_id,
-            event_id : data.event_id,
+            worker_id: data.worker_id,
+            event_id: data.event_id,
 
             action: "retracting Order",
             time: Date.now(),
@@ -480,8 +470,6 @@ const retractOrder = async (req, res) => {
     }
 
 }
-
-
 
 
 const makeOrderByWorker = async (req, res) => {
@@ -510,7 +498,7 @@ const makeOrderByWorker = async (req, res) => {
         const we = await workers_events.findOne({
             where: {
                 event_id: event_id,
-                worker_id : worker.worker_id
+                worker_id: worker.worker_id
             }
         })
 
