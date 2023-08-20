@@ -455,9 +455,11 @@ const addWorkersToEvent = async (req, res) => {
                 cost
             });
 
+            eventEmitter.emit('send_event_id', worker_id, event_id);
+
         }
 
-        eventEmitter.emit('send_event_id', event_id);
+
 
         res.status(200).send(responseMessage(true, "workers have been added to the event successfully"));
 
