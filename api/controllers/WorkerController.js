@@ -298,6 +298,7 @@ const confirmArrival = async (req, res) => {
         const customer_id = reservation.customer_id;
 
         eventEmitter.emit('sendID', customer_id, reservation_id);
+        
 
         await Actions.create({
             worker_id: worker_id,

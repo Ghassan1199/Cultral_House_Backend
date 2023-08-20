@@ -144,7 +144,7 @@ app.use("/resIdToUser/:id", (req, res) => {
 
 
 
-app.use("/sseForCustomers/:id", (_, res) => {
+app.use("/sseForCustomers/:id", (req, res) => {
 
     SSEConfig(res);
 
@@ -152,6 +152,7 @@ app.use("/sseForCustomers/:id", (_, res) => {
 
     eventEmitter.on('sendID', (customer_id, reservation_id) => {
 
+     
 
         if (id == customer_id) {
             res.status(200).write(`data: ${reservation_id}\n\n`);
