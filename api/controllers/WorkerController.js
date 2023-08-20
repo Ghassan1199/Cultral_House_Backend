@@ -6,7 +6,6 @@ const RError = require("../middleware/error.js");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const eventEmitter = require("./eventEmitter");
-const event = require("../Models/event");
 
 
 const Worker = db.workers;
@@ -191,8 +190,8 @@ const showWorkerDetails = async (req, res) => {
         });
 
 
-        let obj=[];
-        for(let event of events){
+        let obj = [];
+        for (let event of events) {
 
             event = event.toJSON();
 
@@ -203,8 +202,8 @@ const showWorkerDetails = async (req, res) => {
                 },
             });
 
-         
-            event.actions=actions;
+
+            event.actions = actions;
             obj.push(event)
 
         }
@@ -302,7 +301,7 @@ const confirmArrival = async (req, res) => {
 
         await Actions.create({
             worker_id: worker_id,
-            event_id:event.event_id,
+            event_id: event.event_id,
             action: "confirm arrival",
             time: Date.now(),
             details: reservation
@@ -354,7 +353,6 @@ const retractConfirmation = async (req, res) => {
 
         reservation.save();
 
-        
 
         res.status(200).send(responseMessage(true, "reservations have been approved successfully", reservation));
 
@@ -383,40 +381,34 @@ const approveOrder = async (req, res) => {
 
         const order = await Order.findByPk(order_id)
 
-
         if (order == null) {
-
             throw new RError(404, "order not found");
 
-
         }
-
 
         const reservation = await Reservation.findByPk(order.reservation_id);
 
         let wo;
 
         if (reservation != null) {
-             wo = await workers_events.findOne({
+            wo = await workers_events.findOne({
                 where: {
                     worker_id,
                     event_id: reservation.event_id
-    
+
                 }
             })
-        }else{
+        } else {
 
             wo = await workers_events.findOne({
                 where: {
-                    worker_id    
+                    worker_id
                 }
             })
 
         }
-     
 
-
-        const data ={};
+        const data = {};
         data.reservation_id = wo.reservation_id
         data.order_id = order_id
         data.worker_id = worker_id
@@ -426,8 +418,8 @@ const approveOrder = async (req, res) => {
         order.save();
 
         await Actions.create({
-            worker_id : worker_id,
-            event_id : data.event_id,
+            worker_id: worker_id,
+            event_id: data.event_id,
             action: "Approving Order",
             time: Date.now(),
             details: data
@@ -466,7 +458,7 @@ const retractOrder = async (req, res) => {
 
         }
 
-        const data ={};
+        const data = {};
         data.reservation_id = order.reservation_id
         data.order_id = order_id
         data.worker_id = order.worker_event_id.worker_id
@@ -476,8 +468,8 @@ const retractOrder = async (req, res) => {
         order.save();
 
         await Actions.create({
-            worker_id : data.worker_id,
-            event_id : data.event_id,
+            worker_id: data.worker_id,
+            event_id: data.event_id,
 
             action: "retracting Order",
             time: Date.now(),
@@ -493,8 +485,6 @@ const retractOrder = async (req, res) => {
     }
 
 }
-
-
 
 
 const makeOrderByWorker = async (req, res) => {
@@ -517,15 +507,22 @@ const makeOrderByWorker = async (req, res) => {
 
         transaction = await sequelize.transaction();
 
+        const worker = await workerAuth(token);
+        const event_id = req.body.event_id;
 
-        await workerAuth(token);
+        const we = await workers_events.findOne({
+            where: {
+                event_id: event_id,
+                worker_id : worker.worker_id
+            }
+        })
 
+        console.log("the worker_event is " + we.worker_event_id)
         const order = await Order.create({
-
             order_date: Date(),
             reservation_id: null,
-            description
-
+            description,
+            worker_event_id: we.worker_event_id
         }, {transaction});
 
 
@@ -533,7 +530,7 @@ const makeOrderByWorker = async (req, res) => {
 
         let cost = 0;
 
-         drinks = drinks.split(/[,]/);
+        drinks = drinks.split(/[,]/);
 
         for (let drink of drinks) {
 

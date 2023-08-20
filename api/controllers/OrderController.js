@@ -449,24 +449,16 @@ const showAllOrders = async (req, res) => {
 // need streaming to send the event_id? 
 
     try {
-
-
         let orders = await Order.findAll({
             where: {worker_event_id: null}, include: [Reservation, {
                 model: Orders_drinks,
-
                 include: Drink
-            }
-
-            ]
+            }]
         });
 
 
-        if (orders.length == 0) {
-
+        if (orders.length === 0) {
             throw new RError(404, "no orders found");
-
-
         }
 
 
@@ -482,9 +474,8 @@ const showAllOrders = async (req, res) => {
 
             newOrders.push(order);
         }
-
-
         res.status(200).send(responseMessage(true, "orders are retrieved", newOrders));
+
     } catch (error) {
 
         const statusCode = error.statusCode || 500;
