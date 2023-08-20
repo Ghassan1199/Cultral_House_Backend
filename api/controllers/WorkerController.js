@@ -101,7 +101,8 @@ const login = async (req, res) => {
                 const {worker_id, first_name} = worker;
 
                 const token = jwt.sign({worker_id, first_name}, process.env.SECRET, {expiresIn: '3d'});
-                res.status(200).send(responseMessage(true, "token is generated", token, "token"));
+                const data = {token, worker_id}
+                res.status(200).send(responseMessage(true, "token is generated", data));
 
 
             }
@@ -354,7 +355,7 @@ const retractConfirmation = async (req, res) => {
 
         reservation.save();
 
-        
+
 
         res.status(200).send(responseMessage(true, "reservations have been approved successfully", reservation));
 
