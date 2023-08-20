@@ -221,7 +221,7 @@ const updateEvent = async (req, res) => {
 
 const showAllEvents = async (req, res) => {
 
-    var events = await Event.findAll({ include: Photos });
+    let events = await Event.findAll({ include: Photos });
     const past = [];
     const upComing = [];
     const now = [];
@@ -242,7 +242,7 @@ const showAllEvents = async (req, res) => {
 
     //2023-08-07 15:00
     for (let index = 0; index < events.length; index++) {
-        var event = events[index].toJSON();
+        let event = events[index].toJSON();
         const dateObject = new Date(event.begin_date);
         const date = dateObject.toLocaleString("en", { hour12: false });
         const dateArray = date.split(/[,:]/);
