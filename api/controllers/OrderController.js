@@ -13,6 +13,7 @@ const Op = db.Op;
 const sequelize = db.sequelize;
 const Drink = db.drinks;
 const ValidationError = db.ValidationError;
+const Event = db.events;
 
 
 const makeOrder = async (req, res) => {
