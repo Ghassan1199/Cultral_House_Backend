@@ -582,7 +582,6 @@ const deleteOrderByWorker = async (req, res) => {
 
     } catch (errors) {
 
-        await transaction.rollback();
         let statusCode = errors.statusCode || 500;
         if (errors instanceof ValidationError) {
             statusCode = 400;
