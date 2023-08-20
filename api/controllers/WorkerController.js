@@ -378,22 +378,14 @@ const approveOrder = async (req, res) => {
 
 
         const worker = await workerAuth(token);
-
         const worker_id = worker.worker_id;
-
         const order = await Order.findByPk(order_id)
 
-
         if (order == null) {
-
             throw new RError(404, "order not found");
-
-
         }
 
-
         const reservation = await Reservation.findByPk(order.reservation_id);
-
         let wo;
 
         if (reservation != null) {
@@ -401,26 +393,22 @@ const approveOrder = async (req, res) => {
                 where: {
                     worker_id,
                     event_id: reservation.event_id
-    
                 }
             })
         }else{
-
             wo = await workers_events.findOne({
                 where: {
                     worker_id    
                 }
             })
-
         }
      
 
 
         const data ={};
-        data.reservation_id = wo.reservation_id
-        data.order_id = order_id
-        data.worker_id = worker_id
-        data.event_id = wo.event_id
+        data.reservation = reservation
+        data.order = order
+        data.event_id = reservation.event_id
 
         order.worker_event_id = wo.worker_event_id;
         order.save();
@@ -508,6 +496,9 @@ const makeOrderByWorker = async (req, res) => {
     if (!drinks) {
         return res.status(400).send(responseMessage(false, "insert drinks"));
     }
+    if(!req.body.event_id){
+        return res.status(400).send(responseMessage(false, "insert event_id"));
+    }
 
 
     let transaction;
@@ -527,7 +518,6 @@ const makeOrderByWorker = async (req, res) => {
             description
 
         }, {transaction});
-
 
         const ODS = [];
 
@@ -590,41 +580,22 @@ const deleteOrderByWorker = async (req, res) => {
 
     if (!order_id) {
         return res.status(400).send(responseMessage(false, "choose order"));
-
-
     }
 
-
     try {
-
-
         await workerAuth(token);
-
-
         const order = await Order.findByPk(order_id);
-
-
         await order.destroy();
-
-
         res.status(201).send(responseMessage(true, "order is deleted", order));
-
 
     } catch (errors) {
 
-
         await transaction.rollback();
-
-        var statusCode = errors.statusCode || 500;
+        let statusCode = errors.statusCode || 500;
         if (errors instanceof ValidationError) {
-
             statusCode = 400;
-
         }
-
         return res.status(statusCode).send(responseMessage(false, errors.message));
-
-
     }
 
 }

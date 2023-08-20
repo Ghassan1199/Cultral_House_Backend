@@ -23,7 +23,7 @@ const Actions = db.actions;
 
 const createAdmin = async (req, res) => {
     try {
-        const { admin_name, email, password, is_super } = req.body;
+        const {admin_name, email, password, is_super} = req.body;
         const data = {
             admin_name,
             email,
@@ -45,9 +45,9 @@ const createAdmin = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const {email, password} = req.body;
         if (!email || !password) {
-            res.status(400).json({ msg: "validation error" })
+            res.status(400).json({msg: "validation error"})
         }
 
         //find an admin by their email
@@ -66,7 +66,7 @@ const login = async (req, res) => {
             //generate token with the admin's id and the secretKey in the env file
 
             if (isSame) {
-                let token = jwt.sign({ admin: admin }, process.env.SECRET, null, {
+                let token = jwt.sign({admin: admin}, process.env.SECRET, null, {
                     expiresIn: 24 * 60 * 60 * 1000,
                 });
 
@@ -78,10 +78,10 @@ const login = async (req, res) => {
                     token: token
                 });
             } else {
-                return res.status(401).json({ msg: "Authentication failed" });
+                return res.status(401).json({msg: "Authentication failed"});
             }
         } else {
-            return res.status(401).json({ msg: "Authentication failed" });
+            return res.status(401).json({msg: "Authentication failed"});
         }
     } catch (error) {
         console.log(error);
@@ -96,19 +96,21 @@ const deleteAdmin = async (req, res) => {
             msg: "no admin_id is given"
         })
     }
+
     const admin = await Admin.findOne({
         where: {
             admin_id: admin_id
         }
     })
+
     if (admin) {
 
         await admin.destroy()
-
         return res.status(202).json({
             msg: "admin has been deleted successfully",
             data: admin
         })
+
     } else {
         res.status(404).json({
             msg: "Admin not found"
@@ -129,24 +131,19 @@ const makeReservationByAdmin = async (req, res) => {
 
     const token = req.headers["x-access-token"];
 
-
     try {
 
         const event_id = req.body.event_id;
         const customer_name = req.body.customer_name;
 
-
         if (!event_id) {
             throw new RError(400, "choose the event");
         }
 
-
         const number_of_places = req.body.number_of_places;
 
         if (!number_of_places) {
-
             throw new RError(400, "enter the number of the attendees");
-
         }
 
         const admin = await adminAuth(token);
@@ -157,19 +154,15 @@ const makeReservationByAdmin = async (req, res) => {
 
 
         if (event == null) {
-
             throw new RError(404, "event not found");
-
         }
 
         if (number_of_places < 1) {
             throw new RError(400, "enter a valid number");
-
         }
 
         if (number_of_places > event.available_places) {
             throw new RError(400, "no enough spots in the events");
-
         }
 
         event.available_places -= number_of_places;
@@ -197,11 +190,9 @@ const makeReservationByAdmin = async (req, res) => {
 
     } catch (errors) {
 
-        var statusCode = errors.statusCode || 500;
+        let statusCode = errors.statusCode || 500;
         if (errors instanceof ValidationError) {
-
             statusCode = 400;
-
         }
 
         return res.status(statusCode).send(responseMessage(false, errors.message));
@@ -230,9 +221,7 @@ const deleteReservationByAdmin = async (req, res) => {
         const reservation = await Reservation.findByPk(reservation_id);
 
         if (reservation === null) {
-
             throw new RError(404, "reservation not found");
-
         }
 
 
@@ -248,8 +237,8 @@ const deleteReservationByAdmin = async (req, res) => {
 
         event.available_places += number_of_places;
 
-        await reservation.destroy({ transaction });
-        await event.save({ transaction });
+        await reservation.destroy({transaction});
+        await event.save({transaction});
 
         await transaction.commit();
 
@@ -262,15 +251,11 @@ const deleteReservationByAdmin = async (req, res) => {
 
         res.status(200).send(responseMessage(true, "reservation has been deleted successfully"));
 
-
     } catch (error) {
-
-
         await transaction.rollback();
-
         const statusCode = error.statusCode || 500;
-        return res.status(statusCode).send(responseMessage(false, error.message));
 
+        return res.status(statusCode).send(responseMessage(false, error.message));
 
     }
 
@@ -283,20 +268,15 @@ const stats = async (req, res) => {
     const workersCost = await workers_events.sum("cost");
     let drinksCost = 0;
 
-
     //for proceeds
 
     let ordersProceeds = 0;
-    const OD = await Orders_drinks.findAll({ include: Drinks });
-
+    const OD = await Orders_drinks.findAll({include: Drinks});
 
     OD.forEach(od => {
         if (od["drink"] != null) {
             ordersProceeds += (od["quantity"] * od["drink"]["price"]);
-
         }
-
-
     });
 
     let reservationsProceeds = 0;
@@ -312,11 +292,7 @@ const stats = async (req, res) => {
     });
 
     reservations.forEach(res => {
-
         reservationsProceeds += (res["attendance_number"] * res["event"]["ticket_price"]);
-
-
-
 
     });
 
@@ -389,59 +365,39 @@ const showReservationsForAdmin = async (req, res) => {
     try {
         await adminAuth(token);
 
-
         const reservations = await Reservation.findAll();
 
         if (reservations.length === 0) {
             throw new RError(404, "no reservations found");
-
-
         }
 
         res.status(200).send(responseMessage(true, "reservations have been updated successfully", reservations));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
 
     }
 }
 
 const addWorkersToEvent = async (req, res) => {
 
-
     const token = req.headers["x-access-token"];
-
     const event_id = req.body.event_id;
     let workers = req.body.workers;
-
-  
-
-
 
     try {
 
         if (!event_id) {
-         
-         
             throw new RError(400, "choose the event");
         }
 
         if (!workers) {
-         
-         
             throw new RError(400, "choose the workers");
         }
 
-
         await adminAuth(token);
-
         workers = workers.split(/[,]/);
-
-       
-
 
         for (let worker of workers) {
 
@@ -454,21 +410,14 @@ const addWorkersToEvent = async (req, res) => {
                 worker_id,
                 cost
             });
-
             eventEmitter.emit('send_event_id', worker_id, event_id);
-
         }
-
-
 
         res.status(200).send(responseMessage(true, "workers have been added to the event successfully"));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
 
@@ -477,47 +426,32 @@ const addWorkersToEvent = async (req, res) => {
 const getActions = async (req, res) => {
     const admin_id = req.body.admin_id;
 
-
     try {
 
-
-
-        const acts = await Actions.findAll({ where: { admin_id } });
-
+        const acts = await Actions.findAll({where: {admin_id}});
         let actions = [];
 
         for (let index = 0; index < acts.length; index++) {
             const element = acts[index];
-            let { action, details, time } = element;
-
-
+            let {action, details, time} = element;
 
             const dateObject = new Date(time);
-            const date = dateObject.toLocaleString("en", { hour12: false });
-
+            const date = dateObject.toLocaleString("en", {hour12: false});
             time = date;
-
-
-            const act = { action, time, details };
-
+            const act = {action, time, details};
             actions.push(act);
 
         }
 
-
-
         res.status(200).send(responseMessage(true, "actions retrieved successfully", actions));
 
     } catch (error) {
-
         const statusCode = error.statusCode || 500;
         return res.status(statusCode).send(responseMessage(false, error.message));
-
-
     }
 
-
 }
+
 module.exports = {
     createAdmin,
     login,
