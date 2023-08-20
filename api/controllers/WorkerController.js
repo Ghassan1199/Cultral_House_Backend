@@ -408,8 +408,7 @@ const approveOrder = async (req, res) => {
         const data ={};
         data.reservation = reservation
         data.order = order
-        data.worker = worker
-        data.event = event
+        data.event_id = reservation.event_id
 
         order.worker_event_id = wo.worker_event_id;
         order.save();
