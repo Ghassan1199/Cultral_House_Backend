@@ -132,7 +132,7 @@ app.use("/resIdToUser/:id", (req, res) => {
 
 
         if (id == customer_id) {
-            res.status(200).write(`data: reservation id is ${reservaation_id}\n\n`);
+            res.status(200).write(`data: ${reservaation_id}\n\n`);
 
         }
 
