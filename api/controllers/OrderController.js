@@ -62,7 +62,7 @@ const makeOrder = async (req, res) => {
         if (Math.abs(timeDifferenceInMinutes) >= 5) {
             eventEmitter.emit('eventHasEnded',reservation.customer_id);
 
-            return res.status(401).send(responseMessage(true, "the event is over"));
+           return  res.status(303).send(responseMessage(true, "the event is over"));
 
         }
 
