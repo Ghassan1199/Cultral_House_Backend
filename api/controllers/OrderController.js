@@ -52,27 +52,21 @@ const makeOrder = async (req, res) => {
         const currentDate = new Date();
 
 
-
-        
         const timeDifferenceInMilliseconds = eventDate - currentDate;
         const timeDifferenceInHours = timeDifferenceInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
         const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
 
 
         if (Math.abs(timeDifferenceInMinutes) >= 15) {
-            eventEmitter.emit('eventHasEnded',reservation.customer_id);
-
-           return  res.status(303).send(responseMessage(true, "the event is over"));
+            eventEmitter.emit('eventHasEnded', reservation.customer_id);
+            return res.status(303).send(responseMessage(true, "the event is over"));
 
         }
 
-
-
-
         const order = await Order.create({
-
-            order_date: Date(), reservation_id, description
-
+            order_date: Date.now()
+            , reservation_id
+            , description
         }, {transaction});
 
 
@@ -89,18 +83,12 @@ const makeOrder = async (req, res) => {
 
             const od = await Orders_drinks.create({
                 order_id: order.order_id,
-
                 drink_id,
-
                 quantity
-
             }, {transaction});
 
-
             const d = await Drink.findByPk(drink_id);
-
             cost += (quantity * d.price);
-
             ODS.push(od);
 
         }
@@ -109,7 +97,6 @@ const makeOrder = async (req, res) => {
 
         let ord = {order, ODS, cost};
 
-
         eventEmitter.emit('create_new_order');
 
         res.status(201).send(responseMessage(true, "order is added", ord));
@@ -117,18 +104,15 @@ const makeOrder = async (req, res) => {
 
     } catch (errors) {
 
-
         await transaction.rollback();
 
         let statusCode = errors.statusCode || 500;
         if (errors instanceof ValidationError) {
 
             statusCode = 400;
-
         }
 
         return res.status(statusCode).send(responseMessage(false, errors.message));
-
 
     }
 
@@ -481,8 +465,8 @@ const showAllOrders = async (req, res) => {
                 model: Orders_drinks,
                 include: Drink
             },
-        
-        ]
+
+            ]
         });
 
 
