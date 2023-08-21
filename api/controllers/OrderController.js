@@ -51,7 +51,7 @@ const makeOrder = async (req, res) => {
         const eventDate = new Date(event.begin_date);
         const currentDate = new Date();
 
-
+        console.log(Date.now())
         const timeDifferenceInMilliseconds = eventDate - currentDate;
         const timeDifferenceInHours = timeDifferenceInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
         const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
@@ -69,7 +69,7 @@ const makeOrder = async (req, res) => {
             , description
         }, {transaction});
 
-        console.log(Date.now())
+
 
         const ODS = [];
 
