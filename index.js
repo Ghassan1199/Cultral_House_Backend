@@ -103,6 +103,12 @@ app.use("/notificationsForOrders", (_, res) => {
 
     });
 
+    eventEmitter.on('create_new_reservation', () => {
+
+        res.status(200).write(`data: new Reservation\n\n`);
+
+
+    });
 
 });
 

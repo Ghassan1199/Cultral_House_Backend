@@ -23,7 +23,7 @@ const Actions = db.actions;
 
 const createAdmin = async (req, res) => {
     try {
-        const {admin_name, email, password, is_super} = req.body;
+        const { admin_name, email, password, is_super } = req.body;
         const data = {
             admin_name,
             email,
@@ -45,9 +45,9 @@ const createAdmin = async (req, res) => {
 
 const login = async (req, res) => {
     try {
-        const {email, password} = req.body;
+        const { email, password } = req.body;
         if (!email || !password) {
-            res.status(400).json({msg: "validation error"})
+            res.status(400).json({ msg: "validation error" })
         }
 
         //find an admin by their email
@@ -66,7 +66,7 @@ const login = async (req, res) => {
             //generate token with the admin's id and the secretKey in the env file
 
             if (isSame) {
-                let token = jwt.sign({admin: admin}, process.env.SECRET, null, {
+                let token = jwt.sign({ admin: admin }, process.env.SECRET, null, {
                     expiresIn: 24 * 60 * 60 * 1000,
                 });
 
@@ -78,10 +78,10 @@ const login = async (req, res) => {
                     token: token
                 });
             } else {
-                return res.status(401).json({msg: "Authentication failed"});
+                return res.status(401).json({ msg: "Authentication failed" });
             }
         } else {
-            return res.status(401).json({msg: "Authentication failed"});
+            return res.status(401).json({ msg: "Authentication failed" });
         }
     } catch (error) {
         console.log(error);
@@ -185,6 +185,8 @@ const makeReservationByAdmin = async (req, res) => {
             details: reservation
         })
 
+        eventEmitter.emit('create_new_reservation');
+
         res.status(201).send(responseMessage(true, "reservation has been added", reservation));
 
 
@@ -237,8 +239,8 @@ const deleteReservationByAdmin = async (req, res) => {
 
         event.available_places += number_of_places;
 
-        await reservation.destroy({transaction});
-        await event.save({transaction});
+        await reservation.destroy({ transaction });
+        await event.save({ transaction });
 
         await transaction.commit();
 
@@ -271,7 +273,7 @@ const stats = async (req, res) => {
     //for proceeds
 
     let ordersProceeds = 0;
-    const OD = await Orders_drinks.findAll({include: Drinks});
+    const OD = await Orders_drinks.findAll({ include: Drinks });
 
     OD.forEach(od => {
         if (od["drink"] != null) {
@@ -441,17 +443,17 @@ const getActions = async (req, res) => {
 
     try {
 
-        const acts = await Actions.findAll({where: {admin_id}});
+        const acts = await Actions.findAll({ where: { admin_id } });
         let actions = [];
 
         for (let index = 0; index < acts.length; index++) {
             const element = acts[index];
-            let {action, details, time} = element;
+            let { action, details, time } = element;
 
             const dateObject = new Date(time);
-            const date = dateObject.toLocaleString("en", {hour12: false});
+            const date = dateObject.toLocaleString("en", { hour12: false });
             time = date;
-            const act = {action, time, details};
+            const act = { action, time, details };
             actions.push(act);
 
         }
