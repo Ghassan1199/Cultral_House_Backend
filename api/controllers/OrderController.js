@@ -69,6 +69,7 @@ const makeOrder = async (req, res) => {
             , description
         }, {transaction});
 
+        console.log(Date.now())
 
         const ODS = [];
 
