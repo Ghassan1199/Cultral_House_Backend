@@ -59,7 +59,7 @@ const makeOrder = async (req, res) => {
         const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
 
 
-        if (Math.abs(timeDifferenceInMinutes) >= 5) {
+        if (Math.abs(timeDifferenceInMinutes) >= 15) {
             eventEmitter.emit('eventHasEnded',reservation.customer_id);
 
            return  res.status(303).send(responseMessage(true, "the event is over"));

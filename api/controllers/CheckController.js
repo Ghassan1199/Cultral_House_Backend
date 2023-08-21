@@ -53,7 +53,7 @@ const check = async (req, res)=>{
             const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
     
     
-            if (Math.abs(timeDifferenceInMinutes) >= 5) {
+            if (Math.abs(timeDifferenceInMinutes) >= 15) {
     
                return  res.status(303).send(responseMessage(false, "event is over"));
     

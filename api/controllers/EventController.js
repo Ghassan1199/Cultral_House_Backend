@@ -282,7 +282,7 @@ const showAllEvents = async (req, res) => {
                     past.push(event);
 
                 } else {
-                    const eventDurationInMinutes =  5;
+                    const eventDurationInMinutes =  15;
 
                     const currentTimeInMinutes = currentHours * 60 + Number(currentMinutes);
 
