@@ -41,6 +41,10 @@ const createEvent = async (req, res) => {
 
     const token = req.headers["x-access-token"];
 
+    if(new Date(begin_date) < new Date()){
+        return res.status(400).send(responseMessage(false,"The date you added is Old"))
+    }
+
     let transaction;
 
     try {
