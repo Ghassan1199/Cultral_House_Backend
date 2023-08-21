@@ -12,6 +12,8 @@ const workers = require("./api/routes/worker")
 const reports = require("./api/routes/report");
 const orders = require("./api/routes/order");
 const reservations = require("./api/routes/reservation");
+const check = require("./api/routes/check");
+
 const cors = require('cors');
 dotenv.config();
 
@@ -40,6 +42,8 @@ app.use("/worker", workers)
 app.use('/reports', reports);
 app.use('/orders', orders);
 app.use('/reservations', reservations);
+app.use('/r', check);
+
 
 app.use(express.json())
 
