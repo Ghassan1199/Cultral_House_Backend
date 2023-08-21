@@ -51,7 +51,7 @@ const makeOrder = async (req, res) => {
         const eventDate = new Date(event.begin_date);
         const currentDate = new Date();
 
-        console.log(Date.now().toLocaleString("en", {hour12: false}));
+        console.log(Date().toLocaleString("en", {hour12: false}));
         const timeDifferenceInMilliseconds = eventDate - currentDate;
         const timeDifferenceInHours = timeDifferenceInMilliseconds / (1000 * 60 * 60); // Convert milliseconds to hours
         const timeDifferenceInMinutes = timeDifferenceInMilliseconds / (1000 * 60); // Convert milliseconds to hours
@@ -64,7 +64,7 @@ const makeOrder = async (req, res) => {
         }
 
         const order = await Order.create({
-            order_date: Date.now()
+            order_date: Date()
             , reservation_id
             , description
         }, {transaction});
