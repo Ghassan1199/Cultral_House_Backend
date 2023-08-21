@@ -396,6 +396,7 @@ const addWorkersToEvent = async (req, res) => {
             throw new RError(400, "choose the workers");
         }
 
+
         await adminAuth(token);
         workers = workers.split(/[,]/);
 
@@ -404,6 +405,18 @@ const addWorkersToEvent = async (req, res) => {
             worker = worker.split(/[:]/);
             const worker_id = worker[0];
             const cost = worker[1];
+
+            const temp = await workers_events.findOne({
+                where: {
+                    event_id: event_id,
+                    worker_id: worker
+                }
+            })
+
+            if (temp) {
+                return res.status(400).send(responseMessage(false, "this worker is already added to this event"));
+            }
+
 
             await workers_events.create({
                 event_id,
