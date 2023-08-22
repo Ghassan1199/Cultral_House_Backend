@@ -328,7 +328,7 @@ const stats = async (req, res) => {
     })
 
     drinks.forEach(drink => {
-        drinks_quantity += drink["quantity"];
+        drinks_quantity += 1;
         drinksCost += (drink["cost"] * drink["quantity"]);
     })
 
